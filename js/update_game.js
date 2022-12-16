@@ -4,14 +4,14 @@ $("form").submit(function (event) {
     var $inputs = $('form :input');
     var is_empty = false;
 
-    data = { "update_owner":{} };
-    data["update_owner"]["id"] = $inputs[0].value;
+    data = { "update_game":{} };
+
 
     for (var i = 0; i < $inputs.length - 1; i++) {
 
         if ($inputs[i].value !== "")
 
-            data["update_owner"][$inputs[i].name] = $inputs[i].value;
+            data["update_game"][$inputs[i].name] = $inputs[i].value;
 
         else {
 
@@ -47,7 +47,7 @@ $("form").submit(function (event) {
                         icon: "error",
                         title: "Ошибка записи в БД",
                         html: "Вы заполнили не все поля",
-                        confirmButtonColor: "#2e82c3",
+                        confirmButtonColor: "#C177FF",
                     }).then(function() {
                         window.location.reload();
                     });
@@ -56,8 +56,8 @@ $("form").submit(function (event) {
                     Swal.fire({
                         icon: "error",
                         title: "Ошибка записи в БД",
-                        html: "Клиент с такими данными уже есть в базе",
-                        confirmButtonColor: "#2e82c3",
+                        html: "Игра с такими данными уже есть в базе",
+                        confirmButtonColor: "#C177FF",
                         confirmButtonText: "Перезагрузить",
                     }).then(function() {
                         window.location.reload();
@@ -68,7 +68,7 @@ $("form").submit(function (event) {
                         icon: "success",
                         title: "Запись успешно обновлена!",
                         html: "",
-                        confirmButtonColor: "#2e82c3",
+                        confirmButtonColor: "#C177FF",
                         confirmButtonText: "Перейти к таблице",
                     }).then(function() {
                         history.back();

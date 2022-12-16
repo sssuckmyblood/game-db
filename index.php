@@ -13,18 +13,19 @@ $url.= $_SERVER['HTTP_HOST'];
 
 $url.= $_SERVER['REQUEST_URI'];
 
-//    $query = pg_query($dbconn, "SELECT * from game ORDER BY id ASC");
-//
-//    if (pg_num_rows($query)) {
-//
-//        while ($data = pg_fetch_assoc($query))
-//            $automobile_array[] = array($data['id_car'],
-//                                        $data['brand'],
-//                                        $data['model'],
-//                                        $data['year'],
-//                                        $data['complectation']
-//                                        );
-//}
+    $query = pg_query($dbconn, "SELECT * from studios ORDER BY id ASC");
+
+    if (pg_num_rows($query)) {
+
+        while ($data = pg_fetch_assoc($query))
+            $studios_array[] = array($data['id'],
+                                     $data['name'],
+                                     $data['year'],
+                                     $data['location'],
+                                     $data['workers'],
+
+                                        );
+}
 
 
 
@@ -34,7 +35,7 @@ $url.= $_SERVER['REQUEST_URI'];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Автомобили</title>
+    <title>Студии</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -79,28 +80,8 @@ $url.= $_SERVER['REQUEST_URI'];
                                 <th>&nbsp;</th>
                             </tr>
                             </thead>
-                            <tr class="alert" role="alert">
-                                <td> 0 </td>
-                                <td> 1С </td>
-                                <td> 1991 </td>
-                                <td> Москва </td>
-                                <td> 2000+ </td>
-                                <td><a href="games?id_studio='.$val[0].'">Игры</a></td>
 
-                                <td>
-                                    <a href="" class="edit"  aria-label="edit">
-                                        <span aria-hidden="true"><a class="edit" href="update_studio?id='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true"><a class="close" href="delete?id='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
-                                    </a>
-                                </td>
-
-                            </tr>
-
-                           <?php foreach ($automobile_array as $val)
+                           <?php foreach ($studios_array as $val)
 
                                echo '
                                <tr class="alert" role="alert">
@@ -109,16 +90,16 @@ $url.= $_SERVER['REQUEST_URI'];
                                 <td> '.$val[2].' </td>
                                 <td> '.$val[3].' </td>
                                 <td> '.$val[4].' </td>
-                                <td><a href="characteristics?id_car='.$val[0].'">Игры</a></td>
+                                <td><a href="games?id_studio='.$val[0].'">Игры</a></td>
                                 
                                 <td>
                                     <a href="" class="edit"  aria-label="edit">
-                                        <span aria-hidden="true"><a class="edit" href="update_automobile?id_car='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
+                                        <span aria-hidden="true"><a class="edit" href="update_studio?id='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true"><a class="close" href="delete?id_car='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
+                                        <span aria-hidden="true"><a class="close" href="delete?id_studio='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
                                     </a>
                                 </td>
                                 

@@ -1,23 +1,22 @@
 <?php
-include "clean.php";
-$id_car = Clean::int($_GET["id_car"]);
-$token = Clean::str($_GET["token"]);
-$id_owner = Clean::int($_GET["id_owner"]);
+$id_studio = $_GET["id_studio"];
+$token = $_GET["token"];
+$id_game = $_GET["id_game"];
 
-if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_car, $_SESSION['token']), $token) or
-    hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_owner, $_SESSION['token']), $token)) {
+if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_studio, $_SESSION['token']), $token) or
+    hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_game, $_SESSION['token']), $token)) {
     if(isset($_SESSION['token']))
         $_SESSION['token'] = bin2hex(random_bytes(35));
 
-    if (!empty($id_car)) {
-        pg_query($dbconn, "Delete from automobile.public.automobile where automobile.public.automobile.id_car = '$id_car'");
+    if (!empty($id_studio)) {
+        pg_query($dbconn, "Delete from studios where id = '$id_studio'");
         echo header("Location: $_SERVER[HTTP_REFERER]");
 
 
     }
 
-    if(!empty($id_owner)){
-        pg_query($dbconn, "Delete from automobile.public.owners where automobile.public.owners.id = '$id_owner'");
+    if(!empty($id_game)){
+        pg_query($dbconn, "Delete from games where id = '$id_game'");
         echo header("Location: $_SERVER[HTTP_REFERER]");
     }
 

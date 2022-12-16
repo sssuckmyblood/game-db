@@ -5,7 +5,6 @@
 
  */
 
-include "clean.php";
 
 if(!isset($_SESSION['token']))
     $_SESSION['token'] = bin2hex(random_bytes(35));
@@ -16,56 +15,60 @@ $url.= $_SERVER['HTTP_HOST'];
 
 $url.= $_SERVER['REQUEST_URI'];
 
-$id_car = Clean::int($_GET["id_car"]);
+$id_studio = $_GET["id_studio"];
 
-//if (!empty($id_car)) {
-//    $query_auto = pg_query($dbconn, "SELECT brand, model, complectation from automobile where id_car = $id_car;");
-//    if (pg_num_rows($query_auto))
-//        $data_auto = pg_fetch_assoc($query_auto);
-//
-//    $query = pg_query($dbconn, "SELECT * from automobile.public.owners WHERE id_car = $id_car ORDER BY ID ASC ");
-//    if (pg_num_rows($query)) {
-//
-//        while ($data = pg_fetch_assoc($query))
-//            $owner_array[] = array(
-//                $data['id'],
-//                $data['fio'],
-//                $data['city'],
-//                $data['phone_number']
-//            );
-//
-//
-//    }
-//
-//
-//} else {
-//    $query = pg_query($dbconn, "SELECT * from automobile.public.owners ORDER BY ID ASC ");
-//
-//    if (pg_num_rows($query)) {
-//
-//        while ($data = pg_fetch_assoc($query))
-//            $owner_array[] = array(
-//                $data['id'],
-//                $data['id_car'],
-//                $data['fio'],
-//                $data['city'],
-//                $data['phone_number']
-//            );
-//
-//        foreach ($owner_array as $val) {
-//            $query_auto = pg_query($dbconn, "SELECT brand, model, complectation from automobile where id_car = '$val[1]'");
-//            if (pg_num_rows($query_auto))
-//                $data[] = pg_fetch_assoc($query_auto);
-//        }
-//
-//    }
-//}
+if (!empty($id_studio)) {
+    $query_studio = pg_query($dbconn, "SELECT name from studios where id = $id_studio;");
+    if (pg_num_rows($query_studio))
+        $data_studio = pg_fetch_assoc($query_studio);
+
+    $query = pg_query($dbconn, "SELECT * from games WHERE id_studio = $id_studio ORDER BY ID ASC ");
+    if (pg_num_rows($query)) {
+
+        while ($data = pg_fetch_assoc($query))
+            $game_array[] = array(
+                $data['id'],
+                $data['name'],
+                $data['year_release'],
+                $data['category'],
+                $data['platform'],
+                $data['carrier']
+            );
+
+
+    }
+
+
+} else {
+    $query = pg_query($dbconn, "SELECT * from games ORDER BY ID ASC ");
+
+    if (pg_num_rows($query)) {
+
+        while ($data = pg_fetch_assoc($query))
+            $game_array[] = array(
+                $data['id'],
+                $data['id_studio'],
+                $data['name'],
+                $data['year_release'],
+                $data['category'],
+                $data['platform'],
+                $data['carrier']
+            );
+
+        foreach ($game_array as $val) {
+            $query_studio = pg_query($dbconn, "SELECT name from studios where id = '$val[1]'");
+            if (pg_num_rows($query_studio))
+                $studio[] = pg_fetch_assoc($query_studio);
+        }
+
+    }
+}
 
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Автомобили</title>
+    <title>Игры</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -100,8 +103,8 @@ $id_car = Clean::int($_GET["id_car"]);
                     <div class="table-wrap">
                              <button class="input__item create">
                                  <?php
-                                 if (!empty($id_car))
-                                     echo 'ТАБЛИЦА ИГР СТУДИИ' . $data_auto ["brand"];
+                                 if (!empty($id_studio))
+                                     echo 'ТАБЛИЦА ИГР СТУДИИ ' . $data_studio["name"];
                                  else echo 'ТАБЛИЦА ИГР';
 
 
@@ -111,7 +114,7 @@ $id_car = Clean::int($_GET["id_car"]);
                         <table class="table">
                             <thead class="thead-blue">
                             <?php
-                           if(!empty($id_car)) {
+                           if(!empty($id_studio)) {
                                echo '
                             <tr>
                                 <th>ID</th>
@@ -123,7 +126,7 @@ $id_car = Clean::int($_GET["id_car"]);
                                 <th>&nbsp;</th>
                                 <th>&nbsp;</th> 
                               
-                                
+                             
                                 ';
                            } else {
                                echo '
@@ -145,24 +148,26 @@ $id_car = Clean::int($_GET["id_car"]);
                             </thead>
                             <tbody>
                             <?php
-                            if(!empty($id_car)){
+                            if(!empty($id_studio)){
 
-
-                                foreach ($owner_array as $val) {
+                                foreach ($game_array as $val) {
                                     echo '
                             <tr class="alert" role="alert">
                                 <td scope="row">' . $val[0] . '</td>
                                 <td>' . $val[1] . '</td>
                                 <td>' . $val[2] . '</td>
                                 <td>' . $val[3] . '</td>
+                                <td>' . $val[4] . '</td>
+                                <td>' . $val[5] . '</td>
+                       
                                 <td>
                                     <a href="" class="edit"  aria-label="edit">
-                                        <span aria-hidden="true"><a class="edit" href="update_owners?id_owner='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
+                                        <span aria-hidden="true"><a class="edit" href="update_games?id_game='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true"><a class="close" href="delete?id_owner='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
+                                        <span aria-hidden="true"><a class="close" href="delete?id_game='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
                                     </a>
                                 </td>
                             </tr> ';
@@ -171,23 +176,25 @@ $id_car = Clean::int($_GET["id_car"]);
                             } else {
                                 $i = 0;
 
-                                foreach ($owner_array as $val) {
+                                foreach ($game_array as $val) {
                                     echo '
                             <tr class="alert" role="alert">
                                 <td scope="row">' . $val[0] . '</td>
                                 <td>' . $val[2] . '</td>
-                                <td>' . $data[$i]["brand"] . ' ' . $data[$i]["model"] . '</td>
-                                <td>' . $data[$i]["complectation"] . '</td>
-                                <td>' . $val[3] . '</td>
-                                <td>' . $val[4] . '</td>
+                               <td>' . $studio[$i]["name"] . '</td>
+                               <td>' . $val[3] . '</td>
+                               <td>' . $val[4] . '</td>
+                               <td>' . $val[5] . '</td>
+                               <td>' . $val[6] . '</td>
+                              
                                 <td>
                                     <a href="" class="edit"  aria-label="edit">
-                                        <span aria-hidden="true"><a class="edit" href="update_owners?id_owner='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
+                                        <span aria-hidden="true"><a class="edit" href="update_games?id_game='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-edit"></i></a></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true"><a class="close" href="delete?id_owner='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
+                                        <span aria-hidden="true"><a class="close" href="delete?id_game='.$val[0].'&token='.hash_hmac('sha256', $url.$val[0], $_SESSION['token']).'"><i class="fa fa-close"></i></a></span>
                                     </a>
                                 </td>
                             </tr> ';
@@ -200,9 +207,9 @@ $id_car = Clean::int($_GET["id_car"]);
                             </tbody>
                         </table>
                         <?php
-                        if(empty($id_car))
+                        if(empty($id_studio))
                             echo '
-                             <a href="owners_db"><button type="create" name="create" class="input__item create">
+                             <a href="games_db"><button type="create" name="create" class="input__item create">
                             Добавить новую запись
                             </button></a>
                             ';

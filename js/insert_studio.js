@@ -3,13 +3,13 @@ $("form").submit(function (event) {
     var $inputs = $('form :input');
     var is_empty = false;
 
-    data = {  "new_car":{ } };
+    data = {  "new_studio":{ } };
 
       for (var i = 0; i < $inputs.length - 1; i++) {
 
               if ($inputs[i].value !== "")
 
-                  data["new_car"][$inputs[i].name] = $inputs[i].value;
+                  data["new_studio"][$inputs[i].name] = $inputs[i].value;
 
               else {
 
@@ -46,7 +46,7 @@ $("form").submit(function (event) {
                         icon: "error",
                         title: "Ошибка записи в БД",
                         html: "Вы заполнили не все поля",
-                        confirmButtonColor: "#2e82c3",
+                        confirmButtonColor: "#C177FF",
                     }).then(function() {
                         window.location.reload();
                     });
@@ -55,8 +55,8 @@ $("form").submit(function (event) {
                     Swal.fire({
                         icon: "error",
                         title: "Ошибка записи в БД",
-                        html: "Данный авто уже есть в базе",
-                        confirmButtonColor: "#2e82c3",
+                        html: "Данная студия уже есть в базе",
+                        confirmButtonColor: "#C177FF",
                         confirmButtonText: "Перезагрузить",
                     }).then(function() {
                         window.location.reload();
@@ -67,7 +67,7 @@ $("form").submit(function (event) {
                         icon: "success",
                         title: "Запись успешно добавлена!",
                         html: "",
-                        confirmButtonColor: "#2e82c3",
+                        confirmButtonColor: "#C177FF",
                         confirmButtonText: "Перейти к таблице",
                     }).then(function() {
                         window.location = "/";

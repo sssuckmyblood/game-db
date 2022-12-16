@@ -5,22 +5,19 @@
 
  */
 
-include "clean.php";
 $response = array(
         "json" => true,
         "value" => true,
         "query" => true,
 
-
-
     );
 
-if (isset($_POST['new_car'])) {
+if (isset($_POST['new_studio'])) {
 
         $data = array(
-            "new_car" => []
+            "new_studio" => []
         );
-        if(count($_POST['new_car']) < 10){
+        if(count($_POST['new_studio']) < 4){
             $response["value"] = false;
             $response["query"] = false;
             if(isset($_SESSION['token']))
@@ -29,49 +26,27 @@ if (isset($_POST['new_car'])) {
             exit;
 
         }
-        foreach ($_POST['new_car'] as $key => $value) {
+        foreach ($_POST['new_studio'] as $key => $value) {
 
-                        if (is_string($value))
-                            $value = Clean::str($value);
-                        else if (is_int($value))
-                            $value = Clean::int($value);
-                        else if (is_float($value))
-                            $value = Clean::float($value);
-
-                        $data["new_car"][] = $value;
-
+                        $data["new_studio"][] = $value;
 
           }
 
 
-
-
-        $insert_automobile = pg_prepare($dbconn, "automobile_query",
-        "INSERT INTO automobile.public.automobile (BRAND, 
-                                                         MODEL, 
-                                                         YEAR,
-                                                         COMPLECTATION,
-                                                         engine_volume, 
-                                                         engine_type,
-                                                         engine_power,
-                                                         transmission,
-                                                         carcase,
-                                                         color) VALUES 
+        $insert_studio = pg_prepare($dbconn, "studio_query",
+        "INSERT INTO studios (name,
+                                    year,
+                                    location,
+                                    workers) VALUES 
             ( $1, 
               $2, 
               $3, 
-              $4,
-              $5,
-              $6,
-              $7,
-              $8,
-              $9,
-              $10
+              $4
              );
                 ");
 
-        $insert_automobile = pg_execute($dbconn, "automobile_query", $data['new_car']);
-        if(!$insert_automobile)
+        $insert_studio = pg_execute($dbconn, "studio_query", $data['new_studio']);
+        if(!$insert_studio)
             $response["query"] = false;
 
 
@@ -79,11 +54,11 @@ if (isset($_POST['new_car'])) {
 
 
 
-} else if (isset($_POST['update_car'])) {
+} else if (isset($_POST['update_studio'])) {
 
     $data = array(
-        "update_car" => [] );
-    if(count($_POST["update_car"]) < 11) {
+        "update_studio" => [] );
+    if(count($_POST["update_studio"]) < 5) {
         $response["value"] = false;
         $response["query"] = false;
         if(isset($_SESSION['token']))
@@ -91,138 +66,115 @@ if (isset($_POST['new_car'])) {
         echo json_encode($response);
         exit;
     }
-    foreach ($_POST['update_car'] as $key => $value) {
-        if ($key == "id")
-            $id_car = Clean::int($value);
-        else {
-                if (is_string($value))
-                    $value = Clean::str($value);
-                else if (is_int($value))
-                    $value = Clean::int($value);
-                else if (is_float($value))
-                    $value = Clean::float($value);
-                $data["update_car"][$key] = $value;
-            }
+    foreach ($_POST['update_studio'] as $key => $value) {
 
+                $data['update_studio'][$key] = $value;
 
 
     }
 
 
-    $update_automobile = pg_prepare($dbconn, "automobile_query",
-        "UPDATE automobile.public.automobile SET ( BRAND, 
-                                                         MODEL, 
-                                                         YEAR,
-                                                         COMPLECTATION,
-                                                         engine_volume, 
-                                                         engine_type,
-                                                         engine_power,
-                                                         transmission,
-                                                         carcase,
-                                                         color) =
-            ( $1, 
-              $2, 
+    $update_studio = pg_prepare($dbconn, "studio_query",
+        "UPDATE studios SET ( name,
+                                    year,
+                                    location,
+                                    workers ) =
+            ( $2, 
               $3, 
               $4,
-              $5,
-              $6,
-              $7,
-              $8,
-              $9,
-              $10
-             ) WHERE id_car = '$id_car';
-                ");
-
-    $update_automobile = pg_execute($dbconn, "automobile_query", $data['update_car']);
-    if(!$update_automobile)
-        $response["query"] = false;
-
-
-
-
-
-
-} else if(isset($_POST['new_owner'])){
-    $data = array(
-        "new_owner" => []
-    );
-    if(count($_POST['new_owner']) < 4) {
-        $response["value"] = false;
-        $response["query"] = false;
-        if(isset($_SESSION['token']))
-            $_SESSION['token'] = bin2hex(random_bytes(35));
-        echo json_encode($response);
-        exit;
-    }
-    foreach ($_POST['new_owner'] as $key => $value) {
-            if (is_string($value))
-                $value = Clean::str($value);
-            else if (is_int($value))
-                $value = Clean::int($value);
-            else if (is_float($value))
-                $value = Clean::float($value);
-
-            $data["new_owner"][] = $value;
-
-    }
-
-
-
-
-    $insert_owner = pg_prepare($dbconn, "owner_query",
-        "INSERT INTO automobile.public.owners (id_car, fio, city, phone_number) VALUES 
-            ( $2, 
-              $1, 
-              $3, 
-              $4    
-             );
-                ");
-
-    $insert_automobile = pg_execute($dbconn, "owner_query", $data['new_owner']);
-    if(!$insert_automobile) {
-        $response["query"] = false;
-
-    }
-
-
-} else if (isset($_POST['update_owner'])) {
-
-    $data = array(
-        "update_owner" => []
-    );
-    if(count($_POST["update_owner"]) < 5) {
-        $response["value"] = false;
-        $response["query"] = false;
-        if(isset($_SESSION['token']))
-            $_SESSION['token'] = bin2hex(random_bytes(35));
-        echo json_encode($response);
-        exit;
-    }
-    foreach ($_POST['update_owner'] as $key => $value) {
-
-        if (is_string($value))
-            $value = Clean::str($value);
-        else if (is_int($value))
-            $value = Clean::int($value);
-        else if (is_float($value))
-            $value = Clean::float($value);
-
-        $data["update_owner"][] = $value;
-
-    }
-
-
-    $update_owner= pg_prepare($dbconn, "owner_query",
-        "UPDATE automobile.public.owners SET (id_car, fio, city, phone_number) =
-            ( $3, 
-              $2, 
-              $4, 
-              $5    
+              $5
              ) WHERE id = $1;
                 ");
 
-    $update_owner = pg_execute($dbconn, "owner_query", $data['update_owner']);
-    if(!$update_owner) {
+    $update_studio = pg_execute($dbconn, "studio_query", $data['update_studio']);
+    if(!$update_studio)
+        $response["query"] = false;
+
+
+
+
+
+
+} else if(isset($_POST['new_game'])){
+    $data = array(
+        "new_game" => []
+    );
+    if(count($_POST["new_game"]) < 6) {
+        $response["value"] = false;
+        $response["query"] = false;
+        if(isset($_SESSION['token']))
+            $_SESSION['token'] = bin2hex(random_bytes(35));
+        echo json_encode($response);
+        exit;
+    }
+    foreach ($_POST["new_game"] as $key => $value) {
+            $data["new_game"][] = $value;
+
+    }
+
+
+    $insert_game = pg_prepare($dbconn, "game_query",
+        "INSERT INTO games (id_studio, 
+                                name,
+                                year_release, 
+                                category,
+                                platform,
+                                carrier) VALUES 
+            ( $2, 
+              $1, 
+              $3, 
+              $4,
+              $5, 
+              $6   
+             );
+                ");
+
+    $insert_game = pg_execute($dbconn, "game_query", $data["new_game"]);
+    if(!$insert_game) {
+        $response["query"] = false;
+
+    }
+
+
+} else if (isset($_POST['update_game'])) {
+
+    $data = array(
+        "update_game" => []
+    );
+    if(count($_POST["update_game"]) < 7) {
+        $response["value"] = false;
+        $response["query"] = false;
+        if(isset($_SESSION['token']))
+            $_SESSION['token'] = bin2hex(random_bytes(35));
+        echo json_encode($response);
+        exit;
+    }
+    foreach ($_POST['update_game'] as $key => $value) {
+
+
+        $data['update_game'][] = $value;
+
+    }
+
+
+    $update_game= pg_prepare($dbconn, "game_query",
+        "UPDATE games SET (id_studio,
+                                 name, 
+                                 year_release, 
+                                 category, 
+                                 platform, 
+                                 carrier) =
+            ( $3, 
+              $2, 
+              $4, 
+              $5, 
+              $6,
+              $7     
+             ) WHERE id = $1;
+                ");
+
+    $update_game = pg_execute($dbconn, "game_query", $data['update_game']);
+    if(!$update_game) {
         $response["query"] = false;
 
     }

@@ -4,7 +4,7 @@
     * Форма записи в бд данных о авто
  */
 
-include "clean.php";
+
 
 if(isset($_SESSION['token']))
     $_SESSION['token'] = bin2hex(random_bytes(35));
@@ -28,7 +28,7 @@ $url.= $_SERVER['REQUEST_URI'];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Автомобили</title>
+    <title>Студии</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="<?=hash_hmac('sha256', $url, $_SESSION['token'])?>">
@@ -41,7 +41,7 @@ $url.= $_SERVER['REQUEST_URI'];
 <body>
 <div class="header">
     <div class="logo" style="text-align: center; float:none !important; padding-left: 0;">
-        <a href="/"> БАЗА ДАННЫХ АВТОМОБИЛЕЙ </a>
+        <a href="/"> БАЗА ДАННЫХ РОССИЙСКИХ ИГР </a>
     </div>
 
 </div>
@@ -49,96 +49,40 @@ $url.= $_SERVER['REQUEST_URI'];
 
     <div class="input">
         <div class="big__text">
-            <h2> Добавить запись в таблицу автомобилей </h2>
+            <h2> Добавить запись в таблицу студий </h2>
         </div>
         <form name="insert_f">
 
             <div class="text__form input__item">
-                Марка машины:
+                Название:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="text" name="brand" id="brand" maxlength="64"
-                       placeholder="ВВЕДИТЕ МАРКУ МАШИНЫ">
+                <input class="form-control" type="text" name="name" id="name" maxlength="64"
+                       placeholder="ВВЕДИТЕ НАЗВАНИЕ">
             </div>
 
             <div class="text__form input__item">
-                Модель машины:
-            </div>
-            <div class="login__form input__item">
-                <input class="form-control"  type="text" name="mark" id="mark" maxlength="64"
-                       placeholder="ВВЕДИТЕ МОДЕЛЬ МАШИНЫ">
-            </div>
-
-            <div class="text__form input__item">
-                Год выпуска:
+                Год основания:
             </div>
             <div class="login__form input__item">
                 <input class="form-control"  type="number" name="year" id="year" MIN="1980" max="2023" step="1"
-                       placeholder="ВВЕДИТЕ ГОД ВЫПУСКА МАШИНЫ">
+                       placeholder="ВВЕДИТЕ ГОД ОСНОВАНИЯ">
             </div>
 
             <div class="text__form input__item">
-                Комплектация машины:
+                Расположение:
             </div>
             <div class="login__form input__item">
-                <input class="form-control"  type="text" name="complectation" id="complectation" maxlength="64"
-                       placeholder="ВВЕДИТЕ КОМПЛЕКТАЦИЮ МАШИНЫ">
-            </div>
-            <div class="big__text" style="font-size: 30px; margin-top: 5%;">
-                 Характеристики машины
+                <input class="form-control"  type="text" name="location" id="location" maxlength="64"
+                       placeholder="ВВЕДИТЕ РАСПОЛОЖЕНИЕ">
             </div>
 
             <div class="text__form input__item">
-                Объем двигателя в литрах:
+                Штат сотрудников (кол-во):
             </div>
             <div class="login__form input__item">
-                <input class="form-control"  type="number" step="0.1" name="engine_volume" id="engine_volume" min="0" max="15"
-                       placeholder="ВВЕДИТЕ ОБЪЕМ ДВИГАТЕЛЯ МАШИНЫ (Л)">
-            </div>
-
-            <div class="text__form input__item">
-                Тип двигателя:
-            </div>
-                <select  name="engine_type"  id="engine_type" size="1" class="input__item form-control">
-                    <option value="бензин" selected>Бензин</option>
-                    <option value="дизель">Дизель</option>
-                    <option value="электро">Электро</option>
-                    <option value="гибрид">Гибрид</option>
-                </select>
-
-
-            <div class="text__form input__item">
-                Мощность двигателя в л.с:
-            </div>
-            <div class="login__form input__item">
-                <input class="form-control" " type="number" step="0.1" name="engine_power" id="engine_power" min="1" max="3000"
-                       placeholder="ВВЕДИТЕ МОЩНОСТЬ ДВИГАТЕЛЯ МАШИНЫ">
-            </div>
-
-            <div class="text__form input__item">
-                Тип коробки передач:
-            </div>
-            <select name="transmission"  id="transmission"  size="1" class="input__item form-control">
-                <option value="механическая" selected>Механическая (МКПП)</option>
-                <option value="автомат">Автомат (АКПП)</option>
-                <option value="робот">Робот</option>
-                <option value="вариативная">Вариативная (бесступенчатая)</option>
-            </select>
-
-            <div class="text__form input__item">
-               Тип кузова:
-            </div>
-            <div class="login__form input__item">
-                <input class="form-control"  type="text" name="carcase" id="carcase"  maxlength="64"
-                       placeholder="ВВЕДИТЕ ТИП КУЗОВА МАШИНЫ">
-            </div>
-
-            <div class="text__form input__item">
-                 Цвет:
-            </div>
-            <div class="login__form input__item">
-                <input class="form-control"  type="text" name="color" id="color"  maxlength="64"
-                       placeholder="ВВЕДИТЕ ЦВЕТ МАШИНЫ">
+                <input class="form-control"  type="number" step="1" name="workers" id="workers" min="1"
+                       placeholder="ВВЕДИТЕ ШТАТ СОТРУДНИКОВ">
             </div>
 
             <button type="submit" name="submit" class="input__item submit">

@@ -1,7 +1,7 @@
 <?php
 
 /*
-    * Форма записи в бд данных о владельце
+    * Форма записи в бд данных о игре
  */
 
 if(isset($_SESSION['token']))
@@ -14,14 +14,12 @@ $url.= $_SERVER['HTTP_HOST'];
 
 // Append the requested resource location to the URL
 $url.= $_SERVER['REQUEST_URI'];
-$query_auto = pg_query($dbconn, "select id_car, brand, model, complectation from automobile order by id_car asc ");
-if (pg_num_rows($query_auto))
-    while ($data = pg_fetch_assoc($query_auto))
-        $auto_array[] = array(
-            $data['id_car'],
-            $data['brand'],
-            $data['model'],
-            $data['complectation'],
+$query_studio = pg_query($dbconn, "select id, name from studios order by id asc ");
+if (pg_num_rows($query_studio))
+    while ($data = pg_fetch_assoc($query_studio))
+        $studio_array[] = array(
+            $data['id'],
+            $data['name'],
 
         );
 
@@ -30,7 +28,7 @@ if (pg_num_rows($query_auto))
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Владельцы</title>
+    <title>Игры</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="<?=hash_hmac('sha256', $url, $_SESSION['token'])?>">
@@ -43,7 +41,7 @@ if (pg_num_rows($query_auto))
 <body>
 <div class="header">
     <div class="logo" style="text-align: center; float:none !important; padding-left: 0;">
-        <a href="/owners"> БАЗА ДАННЫХ АВТОМОБИЛЕЙ </a>
+        <a href="/games"> БАЗА ДАННЫХ РОССИЙСКИХ ИГР </a>
     </div>
 
 </div>
@@ -51,47 +49,59 @@ if (pg_num_rows($query_auto))
 
     <div class="input">
         <div class="big__text">
-            <h2> Добавить запись в таблицу владельцев </h2>
+            <h2> Добавить запись в таблицу игр</h2>
         </div>
         <form name="insert_f">
 
             <div class="text__form input__item">
-                ФИО:
+                Название:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="text" name="fio" id="fio" maxlength="64"
-                       placeholder="ВВЕДИТЕ ФИО">
+                <input class="form-control" type="text" name="name" id="name" maxlength="64"
+                       placeholder="ВВЕДИТЕ НАЗВАНИЕ">
             </div>
 
             <div class="text__form input__item">
-                Машина:
+                Студия:
             </div>
 
-                <select name="id_car" id="id_car" size="1" class="input__item form-control">
+                <select name="id_studio" id="id_studio" size="1" class="input__item form-control">
                     <?php
-                    foreach ($auto_array as $val)
-                        echo '<option value="'.$val[0].'">'.$val[1].' '.$val[2].' Комплектации: '.$val[3].'</option>';
+                    foreach ($studio_array as $val)
+                        echo '<option value="'.$val[0].'">'.$val[1].'</option>';
                     ?>
                 </select>
 
 
             <div class="text__form input__item">
-                Город:
+                Год выпуска:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="text" name="city" id="city"  maxlength="64"
-                       placeholder="ВВЕДИТЕ ВАШ ГОРОД">
+                <input class="form-control"  type="number" name="year" id="year" MIN="1980" max="2023" step="1"
+                       placeholder="ВВЕДИТЕ ГОД ВЫПУСКА">
             </div>
 
             <div class="text__form input__item">
-                Номер телефона:
+                Жанр:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="tel" pattern="\+7\d{3}\d{3}\d{2}\d{2}" name="phone_number" id="phone_number" maxlength="64"
-                      value="+7" placeholder="+7">
+                <input class="form-control" type="text" name="category" id="category" maxlength="64"
+                       placeholder="ВВЕДИТЕ ЖАНР">
             </div>
-
-
+            <div class="text__form input__item">
+                Платформа:
+            </div>
+            <div class="login__form input__item">
+                <input class="form-control" type="text" name="platform" id="platform" maxlength="64"
+                       placeholder="ВВЕДИТЕ ПЛАТФОРМУ">
+            </div>
+            <div class="text__form input__item">
+                Носитель:
+            </div>
+            <div class="login__form input__item">
+                <input class="form-control" type="text" name="carrier" id="carrier" maxlength="64"
+                       placeholder="ВВЕДИТЕ НОСИТЕЛЬ">
+            </div>
             <button type="submit" name="submit" class="input__item submit">
                 Сохранить
             </button>

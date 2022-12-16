@@ -1,43 +1,41 @@
 <?php
 
 /*
-    * Форма обновления в бд данных о владельце
+    * Форма обновления в бд данных о игре
  */
 
-include "clean.php";
-$token = Clean::str($_GET["token"]);
-$id_owner = Clean::int($_GET["id_owner"]);
 
-if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_owner, $_SESSION['token']), $token)) {
+$token = $_GET["token"];
+$id_game = $_GET["id_game"];
+
+if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_game, $_SESSION['token']), $token)) {
 
     
-    $url = "http://";
+    $url  = "http://";
     $url .= $_SERVER['HTTP_HOST'];
 
     $url .= $_SERVER['REQUEST_URI'];
 
-    if (!empty($id_owner)) {
-        $query_owner = pg_query($dbconn, "SELECT * from owners where id = $id_owner;");
+    if (!empty($id_game)) {
+        $query_game = pg_query($dbconn, "SELECT * from games where id = $id_game;");
 
 
-        if (pg_num_rows($query_owner)) {
-            $data_owner = pg_fetch_assoc($query_owner);
-            $query_auto = pg_query($dbconn, "SELECT id_car, brand, model, complectation from automobile order by id_car asc;");
-            if (pg_num_rows($query_auto))
-                while ($data = pg_fetch_assoc($query_auto))
-                    $auto_array[] = array(
-                        $data['id_car'],
-                        $data['brand'],
-                        $data['model'],
-                        $data['complectation'],
+        if (pg_num_rows($query_game)) {
+            $data_game = pg_fetch_assoc($query_game);
+            $query_studio = pg_query($dbconn, "SELECT id, name from studios order by id asc;");
+            if (pg_num_rows($query_studio))
+                while ($data = pg_fetch_assoc($query_studio))
+                    $game_array[] = array(
+                        $data['id'],
+                        $data['name'],
 
                     );
-        } else echo header("Location: /owners");
+        } else echo header("Location: /games");
 
 
     }
 } else {
-    echo header("Location: /owners");
+    echo header("Location: /games");
 
 }
 
@@ -46,7 +44,7 @@ if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_owner, $_SESSIO
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Владельцы</title>
+    <title>Игры</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="<?=hash_hmac('sha256', $url, $_SESSION['token'])?>">
@@ -59,7 +57,7 @@ if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_owner, $_SESSIO
 <body>
 <div class="header">
     <div class="logo" style="text-align: center; float:none !important; padding-left: 0;">
-        <a href="/owners"> БАЗА ДАННЫХ АВТОМОБИЛЕЙ </a>
+        <a href="/games"> БАЗА ДАННЫХ РОССИЙСКИХ ИГР </a>
     </div>
 
 </div>
@@ -67,50 +65,62 @@ if (hash_equals(hash_hmac('sha256', $_SERVER["HTTP_REFERER"].$id_owner, $_SESSIO
 
     <div class="input">
         <div class="big__text">
-            <h2> Добавить запись в таблицу владельцев </h2>
+            <h2> Изменить данные игры </h2>
         </div>
         <form name="insert_f">
-            <input class="form-control" value="<?=$id_owner?>" name = "id" type="hidden">
+            <input class="form-control" value="<?=$id_game?>" name = "id" type="hidden">
             <div class="text__form input__item">
                 ФИО:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="text" name="fio" id="fio" maxlength="64" value="<?=$data_owner["fio"]?>"
+                <input class="form-control" type="text" name="fio" id="fio" maxlength="64" value="<?=$data_game["name"]?>"
                        placeholder="ВВЕДИТЕ ФИО">
             </div>
 
             <div class="text__form input__item">
-                Машина:
+                Студия:
             </div>
 
-                <select name="id_car" id="id_car" size="1" class="input__item form-control">
+            <select name="id_studio" id="id_studio" size="1" class="input__item form-control">
                     <?php
-                    foreach ($auto_array as $val)
-                        if($val[0] == $data_owner["id_car"])
-                            echo '<option value="'.$val[0].'" selected>'.$val[1].' '.$val[2].' Комплектации: '.$val[3].'</option>';
+                    foreach ($game_array as $val)
+                        if($val[0] == $data_game["id_studio"])
+                            echo '<option value="'.$val[0].'" selected>'.$val[1].' </option>';
                         else
-                            echo '<option value="'.$val[0].'">'.$val[1].' '.$val[2].' Комплектации: '.$val[3].'</option>';
+                            echo '<option value="'.$val[0].'">'.$val[1].'</option>';
                     ?>
                 </select>
 
 
             <div class="text__form input__item">
-                Город:
+                Год выпуска:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="text" name="city" id="city"  maxlength="64" value="<?=$data_owner["city"]?>"
-                       placeholder="ВВЕДИТЕ ВАШ ГОРОД">
+                <input class="form-control"  type="number" name="year" id="year" MIN="1980" max="2023" step="1" value="<?=$data_game["year_release"]?>"
+                       placeholder="ВВЕДИТЕ ГОД ВЫПУСКА">
             </div>
 
             <div class="text__form input__item">
-                Номер телефона:
+                Жанр:
             </div>
             <div class="login__form input__item">
-                <input class="form-control" type="tel" pattern="\+7\d{3}\d{3}\d{2}\d{2}" name="phone_number" id="phone_number" maxlength="64" value="<?=$data_owner["phone_number"]?>"
-                      value="+7" placeholder="+7">
+                <input class="form-control" type="text" name="category" id="category" maxlength="64" value="<?=$data_game["category"]?>"
+                       placeholder="ВВЕДИТЕ ЖАНР">
             </div>
-
-
+            <div class="text__form input__item">
+                Платформа:
+            </div>
+            <div class="login__form input__item">
+                <input class="form-control" type="text" name="platform" id="platform" maxlength="64" value="<?=$data_game["platform"]?>"
+                       placeholder="ВВЕДИТЕ ПЛАТФОРМУ">
+            </div>
+            <div class="text__form input__item">
+                Носитель:
+            </div>
+            <div class="login__form input__item">
+                <input class="form-control" type="text" name="carrier" id="carrier" maxlength="64" value="<?=$data_game["carrier"]?>"
+                       placeholder="ВВЕДИТЕ НОСИТЕЛЬ">
+            </div>
             <button type="submit" name="submit" class="input__item submit">
                 Сохранить
             </button>
