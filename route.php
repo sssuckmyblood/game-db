@@ -18,7 +18,7 @@ else {
         "host=localhost
                      dbname=game
                      user=postgres
-                     password=kon2005knp");
+                     password=");
 
 if ($dbconn) {
 
