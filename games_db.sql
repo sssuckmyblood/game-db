@@ -1,24 +1,4 @@
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET idle_in_transaction_session_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SELECT pg_catalog.set_config('search_path', '', false);
-SET check_function_bodies = false;
-SET xmloption = content;
-SET client_min_messages = warning;
-SET row_security = off;
 
--- Создаем БД
--- Имя: automobile; Тип: DATABASE; Схема: -; Владелец: postgres
---
-
-CREATE DATABASE automobile WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'Russian_Russia.1251';
-
-
-ALTER DATABASE automobile OWNER TO postgres;
-
-\connect automobile
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,139 +11,160 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-SET default_tablespace = '';
-
-SET default_table_access_method = heap;
-
--- Создаем таблицу автомобилей
--- Имя: automobile; Тип: TABLE; Схема: public; Владелец: postgres
+--
+-- Name: game; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE TABLE public.automobile (
-    id_car integer NOT NULL,
-    brand character varying(256),
-    model character varying(256),
-    year integer,
-    complectation character varying(256),
-    engine_volume numeric,
-    engine_type character varying(256),
-    engine_power numeric,
-    transmission character varying(256),
-    carcase character varying(256),
-    color character varying(256)
-);
+CREATE DATABASE game WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'Russian_Russia.1251';
 
 
-ALTER TABLE public.automobile OWNER TO postgres;
+ALTER DATABASE game OWNER TO postgres;
 
--- Последовательность дл таблицы автомобилей
--- Name: automobile_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
+\connect game
 
-CREATE SEQUENCE public.automobile_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    MINVALUE 0
-    MAXVALUE 2147483647
-    CACHE 1;
-
-
-ALTER TABLE public.automobile_id_seq OWNER TO postgres;
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
 --
--- Name: automobile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: games; Type: TABLE; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.automobile_id_seq OWNED BY public.automobile.id_car;
-
-
--- Создаем таблицу владельцев
--- Имя: owners; Тип: TABLE; Схема: public; Владелец: postgres
---
-
-CREATE TABLE public.owners (
+CREATE TABLE public.games (
     id integer NOT NULL,
-    id_car integer,
-    fio character varying(256),
-    city character varying(256),
-    phone_number character varying(256)
+    id_studio integer,
+    name character varying(256),
+    year_release integer,
+    category character varying(256),
+    platform character varying(256),
+    carrier character varying(256)
 );
 
 
-ALTER TABLE public.owners OWNER TO postgres;
+ALTER TABLE public.games OWNER TO postgres;
 
--- Последовательность для таблицы владельцев
--- Name: clients_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+-- Name: games_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
-CREATE SEQUENCE public.clients_id_seq
+CREATE SEQUENCE public.games_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
-    MINVALUE 0
-    MAXVALUE 2147483647
+    NO MINVALUE
+    NO MAXVALUE
     CACHE 1;
 
 
-ALTER TABLE public.clients_id_seq OWNER TO postgres;
+ALTER TABLE public.games_id_seq OWNER TO postgres;
 
 --
--- Name: clients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+-- Name: games_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.clients_id_seq OWNED BY public.owners.id;
-
-
---
--- Name: automobile id_car; Type: DEFAULT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.automobile ALTER COLUMN id_car SET DEFAULT nextval('public.automobile_id_seq'::regclass);
+ALTER SEQUENCE public.games_id_seq OWNED BY public.games.id;
 
 
 --
--- Name: owners id; Type: DEFAULT; Schema: public; Owner: postgres
+-- Name: studios; Type: TABLE; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.owners ALTER COLUMN id SET DEFAULT nextval('public.clients_id_seq'::regclass);
+CREATE TABLE public.studios (
+    id integer NOT NULL,
+    name character varying(256),
+    year integer,
+    location character varying(256),
+    workers integer
+);
+
+
+ALTER TABLE public.studios OWNER TO postgres;
+
+--
+-- Name: studios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.studios_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.studios_id_seq OWNER TO postgres;
+
+--
+-- Name: studios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.studios_id_seq OWNED BY public.studios.id;
 
 
 --
--- Name: automobile automobile_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: games id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.automobile
-    ADD CONSTRAINT automobile_pk PRIMARY KEY (id_car);
-
-
---
--- Name: owners clients_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.owners
-    ADD CONSTRAINT clients_pk PRIMARY KEY (id);
-
-
--- Задаем индекс уникальности для автомобилей
--- Имя: automobile_brand_model_complectation_uindex; Тип: INDEX; Схема: public; Владелец: postgres
---
-
-CREATE UNIQUE INDEX automobile_brand_model_complectation_uindex ON public.automobile USING btree (brand, model, year, complectation, engine_volume, engine_type, engine_power, transmission, color);
+ALTER TABLE ONLY public.games ALTER COLUMN id SET DEFAULT nextval('public.games_id_seq'::regclass);
 
 
 --
--- Name: clients_uni; Type: INDEX; Schema: public; Owner: postgres
+-- Name: studios id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX clients_uni ON public.owners USING btree (id_car, fio, city, phone_number);
+ALTER TABLE ONLY public.studios ALTER COLUMN id SET DEFAULT nextval('public.studios_id_seq'::regclass);
 
 
--- Здаваем вторичеый ключ для таблицы владельцев
--- Имя: owners clients_automobile_id_car_fk; Тип: FK CONSTRAINT; Схема: public; Владелец: postgres
+--
+-- Name: games games_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.owners
-    ADD CONSTRAINT clients_automobile_id_car_fk FOREIGN KEY (id_car) REFERENCES public.automobile(id_car) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT games_pk PRIMARY KEY (id);
 
+
+--
+-- Name: games_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX games_id_uindex ON public.games USING btree (id);
+
+
+--
+-- Name: games_name_year_release_category_platform_carrier_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX games_name_year_release_category_platform_carrier_uindex ON public.games USING btree (name, year_release, category, platform, carrier);
+
+
+--
+-- Name: studios_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX studios_id_uindex ON public.studios USING btree (id);
+
+
+--
+-- Name: studios_name_year_location_workers_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX studios_name_year_location_workers_uindex ON public.studios USING btree (name, year, location, workers);
+
+
+--
+-- Name: games games_studios_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.games
+    ADD CONSTRAINT games_studios_id_fk FOREIGN KEY (id_studio) REFERENCES public.studios(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 
