@@ -11,12 +11,14 @@ $response = array(
         "query" => true,
 
     );
-
+# Получаем запрос на добавление студии
 if (isset($_POST['new_studio'])) {
 
+        # создаем массив для обработки данных
         $data = array(
             "new_studio" => []
         );
+        # проверяем данные которые пришли в запросе на наличие всех полей
         if(count($_POST['new_studio']) < 4){
             $response["value"] = false;
             $response["query"] = false;
@@ -26,13 +28,14 @@ if (isset($_POST['new_studio'])) {
             exit;
 
         }
+        # если условие выполненно тогда записываем данные в массив
         foreach ($_POST['new_studio'] as $key => $value) {
 
                         $data["new_studio"][] = $value;
 
           }
 
-
+        # подготавливаем шаблон запроса в базу данных
         $insert_studio = pg_prepare($dbconn, "studio_query",
         "INSERT INTO studios (name,
                                     year,
@@ -44,7 +47,7 @@ if (isset($_POST['new_studio'])) {
               $4
              );
                 ");
-
+        # выполняем запрос в базу данных
         $insert_studio = pg_execute($dbconn, "studio_query", $data['new_studio']);
         if(!$insert_studio)
             $response["query"] = false;
@@ -69,7 +72,6 @@ if (isset($_POST['new_studio'])) {
     foreach ($_POST['update_studio'] as $key => $value) {
 
                 $data['update_studio'][$key] = $value;
-
 
     }
 
@@ -184,7 +186,6 @@ if (isset($_POST['new_studio'])) {
     $response["value"] = false;
     $response["query"] = false;
     echo header($_SERVER['SERVER_PROTOCOL'] . ' 405 Method Not Allowed');
-
 }
 
 echo json_encode($response);

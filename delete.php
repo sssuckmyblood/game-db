@@ -1,4 +1,9 @@
 <?php
+/*
+    * Модуль удаления данных из бд
+
+
+ */
 $id_studio = $_GET["id_studio"];
 $token = $_GET["token"];
 $id_game = $_GET["id_game"];

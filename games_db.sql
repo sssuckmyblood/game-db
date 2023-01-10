@@ -15,7 +15,7 @@ SET row_security = off;
 -- Name: game; Type: DATABASE; Schema: -; Owner: postgres
 --
 
-CREATE DATABASE game WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'Russian_Russia.1251';
+CREATE DATABASE game WITH TEMPLATE = template0 ENCODING = 'UTF8';
 
 
 ALTER DATABASE game OWNER TO postgres;
